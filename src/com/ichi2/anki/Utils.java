@@ -32,7 +32,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
@@ -611,8 +610,19 @@ public class Utils {
         Date today = Date.valueOf(df.format(cal.getTime()));
         return today;
     }
-
-
+    
+    public static Date genDate(long dateInMillis, double utcOffset) {
+        // The result is not adjusted for timezone anymore, following libanki model
+        // Timezone adjustment happens explicitly in Deck.updateCutoff(), but not in Deck.checkDailyStats()
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        cal.setTimeInMillis(dateInMillis - (long) utcOffset * 1000l);
+        Date today = Date.valueOf(df.format(cal.getTime()));
+        return today;
+    }
+    
+        
     public static void printDate(String name, double date) {
     	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
     	df.setTimeZone(TimeZone.getTimeZone("GMT"));

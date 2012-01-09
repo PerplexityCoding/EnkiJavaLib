@@ -20,8 +20,12 @@ import java.lang.reflect.Field;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -210,7 +214,7 @@ public class Stats {
         values.put("matureEase2", mMatureEase2);
         values.put("matureEase3", mMatureEase3);
         values.put("matureEase4", mMatureEase4);
-	return values;
+        return values;
     }
 
 
@@ -345,19 +349,29 @@ public class Stats {
         return stats;
     }
 
-
     public static Stats dailyStats(Deck deck) {
+    	Date today = Utils.genToday(deck.getUtcOffset());
+    	return getStats(deck, today);
+    }
+    
+    public static Stats dailyStats(Deck deck, int dayD) {
+    	Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+		cal.add(Calendar.DAY_OF_YEAR, -dayD);
+        
+        return getStats(deck, Utils.genDate(cal.getTime().getTime(), deck.getUtcOffset()));
+    }
+
+    public static Stats getStats(Deck deck, Date date) {
         log.info("Getting daily stats...");
         int type = STATS_DAY;
-        Date today = Utils.genToday(deck.getUtcOffset());
         Stats stats = null;
         ResultSet result = null;
 
         try {
-        	log.info("Trying to get stats for " + today.toString());
+        	log.info("Trying to get stats for " + date.toString());
         	result = deck.getDB().rawQuery(
                     "SELECT id " + "FROM stats "
-                    + "WHERE type = " + String.valueOf(type) + " and day = \"" + today.toString() + "\"");
+                    + "WHERE type = " + String.valueOf(type) + " and day = \"" + date.toString() + "\"");
 
             if (result.next()) {
                 stats = new Stats(deck);
@@ -376,7 +390,7 @@ public class Stats {
             }
         }
         stats = new Stats(deck);
-        stats.create(type, today);
+        stats.create(type, date);
         stats.mType = type;
         return stats;
     }
@@ -403,6 +417,10 @@ public class Stats {
      */
     public double getAverageTime() {
         return mAverageTime;
+    }
+    
+    public double getReviewTime() {
+    	return mReviewTime;
     }
 
 

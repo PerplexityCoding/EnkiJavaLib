@@ -361,7 +361,7 @@ public class Deck {
         ArrayList<Long> ids = new ArrayList<Long>();
         // Unsuspend buried/rev early - can remove priorities in the future
         ids = deck.ankiDb.queryColumn(Long.class,
-                "SELECT id FROM cards WHERE type > 2 OR (priority BETWEEN -2 AND -1)", 0);
+                "SELECT id FROM cards WHERE type > 2 OR (priority BETWEEN -2 AND -1)", 1);
         if (!ids.isEmpty()) {
             deck.updatePriorities(Utils.toPrimitive(ids));
             deck.ankiDb.execSQL("UPDATE cards SET type = relativeDelay WHERE type > 2");
@@ -732,7 +732,7 @@ public class Deck {
             commitToDB();
         }
         if (mVersion < 48) {
-            updateFieldCache(Utils.toPrimitive(ankiDb.queryColumn(Long.class, "SELECT id FROM facts", 0)));
+            updateFieldCache(Utils.toPrimitive(ankiDb.queryColumn(Long.class, "SELECT id FROM facts", 1)));
             mVersion = 48;
             commitToDB();
         }
@@ -1997,7 +1997,7 @@ public class Deck {
         // Put temporarily suspended cards back into play. Caller must .reset()
         // FIXME: Can ignore priorities in the future (following libanki)
         ArrayList<Long> ids = ankiDb.queryColumn(Long.class,
-                "SELECT id FROM cards WHERE type BETWEEN 6 AND 8 OR priority = -1", 0);
+                "SELECT id FROM cards WHERE type BETWEEN 6 AND 8 OR priority = -1", 1);
 
         if (!ids.isEmpty()) {
             updatePriorities(Utils.toPrimitive(ids));
@@ -3235,9 +3235,9 @@ public class Deck {
     private String[] allTags_(String where) {
     	try {
             ArrayList<String> t = new ArrayList<String>();
-            t.addAll(ankiDb.queryColumn(String.class, "SELECT tags FROM facts " + where, 0));
-            t.addAll(ankiDb.queryColumn(String.class, "SELECT tags FROM models", 0));
-            t.addAll(ankiDb.queryColumn(String.class, "SELECT name FROM cardModels", 0));
+            t.addAll(ankiDb.queryColumn(String.class, "SELECT tags FROM facts " + where, 1));
+            t.addAll(ankiDb.queryColumn(String.class, "SELECT tags FROM models", 1));
+            t.addAll(ankiDb.queryColumn(String.class, "SELECT name FROM cardModels", 1));
             String joined = Utils.joinTags(t);
             String[] parsed = Utils.parseTags(joined);
             List<String> joinedList = Arrays.asList(parsed);
@@ -3258,7 +3258,7 @@ public class Deck {
     public String[] allUserTags(String where) {
     	try {
     		ArrayList<String> t = new ArrayList<String>();
-            t.addAll(ankiDb.queryColumn(String.class, "SELECT tags FROM facts " + where, 0));
+            t.addAll(ankiDb.queryColumn(String.class, "SELECT tags FROM facts " + where, 1));
             String joined = Utils.joinTags(t);
             String[] parsed = Utils.parseTags(joined);
             List<String> joinedList = Arrays.asList(parsed);
@@ -3277,7 +3277,7 @@ public class Deck {
 
     public void updateFactTags(long[] factIds) {
         updateCardTags(Utils.toPrimitive(ankiDb.queryColumn(Long.class,
-                "SELECT id FROM cards WHERE factId IN " + Utils.ids2str(factIds), 0)));
+                "SELECT id FROM cards WHERE factId IN " + Utils.ids2str(factIds), 1)));
     }
 
 
@@ -3301,7 +3301,7 @@ public class Deck {
             log.info("updateCardTags cardIds: " + Arrays.toString(cardIds));
             ankiDb.delete(this, "cardTags", "cardId IN " + Utils.ids2str(cardIds));
             String factIds = Utils.ids2str(Utils.toPrimitive(ankiDb.queryColumn(Long.class,
-                    "SELECT factId FROM cards WHERE id IN " + Utils.ids2str(cardIds), 0)));
+                    "SELECT factId FROM cards WHERE id IN " + Utils.ids2str(cardIds), 1)));
             log.info("updateCardTags factIds: " + factIds);
             String[] allTags = allTags_("WHERE id IN " + factIds);
             if (allTags != null) {
@@ -3430,7 +3430,7 @@ public class Deck {
      */
 
     public ArrayList<String> factTags(long[] factIds) {
-        return ankiDb.queryColumn(String.class, "SELECT tags FROM facts WHERE id IN " + Utils.ids2str(factIds), 0);
+        return ankiDb.queryColumn(String.class, "SELECT tags FROM facts WHERE id IN " + Utils.ids2str(factIds), 1);
     }
 
 
@@ -3470,7 +3470,7 @@ public class Deck {
         }
 
         ArrayList<String> cardIdList = ankiDb.queryColumn(String.class,
-                "select id from cards where factId in " + Utils.ids2str(factIds), 0);
+                "select id from cards where factId in " + Utils.ids2str(factIds), 1);
 
         for (String cardId : cardIdList) {
                 // Check if the tag already exists
@@ -3532,7 +3532,7 @@ public class Deck {
         }
 
         ArrayList<String> cardIdList = ankiDb.queryColumn(String.class,
-                "select id from cards where factId in " + Utils.ids2str(factIds), 0);
+                "select id from cards where factId in " + Utils.ids2str(factIds), 1);
 
         for (String cardId : cardIdList) {
         	ankiDb.delete(this, "cardTags", "cardId = " + cardId + " and tagId = " + tagId + " and src = " + Card.TAGS_FACT);
@@ -3667,7 +3667,7 @@ public class Deck {
             ArrayList<Long> cids = ankiDb.queryColumn(
                     Long.class,
                     "SELECT DISTINCT cardId FROM cardTags WHERE tagId in "
-                            + Utils.ids2str(Utils.toPrimitive(newPriorities.keySet())), 0);
+                            + Utils.ids2str(Utils.toPrimitive(newPriorities.keySet())), 1);
             updatePriorities(Utils.toPrimitive(cids), null, dirty);
         }
     }
@@ -3852,7 +3852,7 @@ public class Deck {
             // Grab fact ids
             // ArrayList<String> factIds = ankiDB.queryColumn(String.class,
             // "SELECT factId FROM cards WHERE id in " + idsString,
-            // 0);
+            // 1);
 
             // Delete cards
             ankiDb.delete(this, "cards", "id IN " + idsString);
@@ -3867,7 +3867,7 @@ public class Deck {
 
             // Gather affected tags (before we delete the corresponding cardTags)
             ArrayList<String> tags = ankiDb.queryColumn(String.class,
-                    "SELECT tagId FROM cardTags WHERE cardId in " + idsString, 0);
+                    "SELECT tagId FROM cardTags WHERE cardId in " + idsString, 1);
 
             // Delete cardTags
             ankiDb.delete(this, "cardTags", "cardId IN " + idsString);
@@ -4053,7 +4053,7 @@ public class Deck {
     private ArrayList<String> deleteDanglingFacts() {
         log.info("deleteDanglingFacts");
         ArrayList<String> danglingFacts = ankiDb.queryColumn(String.class,
-                "SELECT facts.id FROM facts WHERE facts.id NOT IN (SELECT DISTINCT factId from cards)", 0);
+                "SELECT facts.id FROM facts WHERE facts.id NOT IN (SELECT DISTINCT factId from cards)", 1);
 
         if (danglingFacts.size() > 0) {
             deleteFacts(danglingFacts);
@@ -4100,7 +4100,7 @@ public class Deck {
                     .queryColumn(
                             String.class,
                             "SELECT cards.id FROM cards, facts WHERE facts.modelId = " + id
-                                    + " AND facts.id = cards.factId", 0);
+                                    + " AND facts.id = cards.factId", 1);
             deleteCards(cardsToDelete);
 
             // Delete model
@@ -4204,7 +4204,7 @@ public class Deck {
 
         // Delete all cards that use card model from the deck
         ArrayList<String> cardIds = ankiDb.queryColumn(String.class,
-                "SELECT id FROM cards WHERE cardModelId = " + cardModelId, 0);
+                "SELECT id FROM cards WHERE cardModelId = " + cardModelId, 1);
         deleteCards(cardIds);
 
         // I assume that the line "model.cardModels.remove(cardModel)" actually deletes cardModel from DB (I might be
@@ -4301,7 +4301,7 @@ public class Deck {
 
     private void addHexCache() {
         ArrayList<Long> ids = ankiDb.queryColumn(Long.class,
-                "SELECT id FROM fieldModels UNION SELECT id FROM cardModels UNION SELECT id FROM models", 0);
+                "SELECT id FROM fieldModels UNION SELECT id FROM cardModels UNION SELECT id FROM models", 1);
         JSONObject jsonObject = new JSONObject();
         for (Long id : ids) {
             try {

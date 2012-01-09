@@ -892,7 +892,7 @@ public class SyncClient {
 
         // Delete field models that were not returned by the server
         ArrayList<String> fieldModelsIds = mDeck.getDB().queryColumn(String.class,
-                "SELECT id FROM fieldModels WHERE modelId = " + modelId, 0);
+                "SELECT id FROM fieldModels WHERE modelId = " + modelId, 1);
         if (fieldModelsIds != null) {
             for (String fieldModelId : fieldModelsIds) {
                 if (!ids.contains(fieldModelId)) {
@@ -1027,7 +1027,7 @@ public class SyncClient {
 
         // Delete card models that were not returned by the server
         ArrayList<String> cardModelsIds = mDeck.getDB().queryColumn(String.class, "SELECT id FROM cardModels WHERE modelId = "
-                + modelId, 0);
+                + modelId, 1);
         if (cardModelsIds != null) {
             for (String cardModelId : cardModelsIds) {
                 if (!ids.contains(cardModelId)) {
@@ -1542,7 +1542,7 @@ public class SyncClient {
         // Get filenames
         // files below is never used, so it's commented out
         // ArrayList<String> files = mDeck.getDB().queryColumn(String.class, "SELECT filename FROM media WHERE id IN "
-        //         + idsString, 0);
+        //         + idsString, 1);
 
         // Note the media to delete (Insert the media to delete into mediaDeleted)
         double now = Utils.now();
@@ -1735,7 +1735,7 @@ public class SyncClient {
         Date lastDay = new Date(java.lang.Math.max(0, (long) (mDeck.getLastSync() - 60 * 60 * 24) * 1000));
         log.info("lastDay = " + lastDay.toString());
         ArrayList<Long> ids = mDeck.getDB().queryColumn(Long.class,
-                "SELECT id FROM stats WHERE type = 1 and day >= \"" + lastDay.toString() + "\"", 0);
+                "SELECT id FROM stats WHERE type = 1 and day >= \"" + lastDay.toString() + "\"", 1);
 
         Stats stat = new Stats(mDeck);
         // Put global stats

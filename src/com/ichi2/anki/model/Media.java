@@ -161,7 +161,7 @@ public class Media {
      * @param deck The deck that this operation will be performed on
      */
     public static void removeUnusedMedia(Deck deck) {
-        ArrayList<Long> ids = deck.getDB().queryColumn(Long.class, "SELECT id FROM media WHERE size = 0", 0);
+        ArrayList<Long> ids = deck.getDB().queryColumn(Long.class, "SELECT id FROM media WHERE size = 0", 1);
         for (Long id : ids) {
             deck.getDB().execSQL(String.format(Utils.ENGLISH_LOCALE, "INSERT INTO mediaDeleted " +
                         "VALUES (%d, %f)", id.longValue(), Utils.now()));
@@ -240,7 +240,7 @@ public class Media {
         	result = deck.getDB().rawQuery("SELECT question, answer FROM cards");
             while (result.next()) {
         	    for (int i = 0; i < 2; i++) {
-                    txt = result.getString(i);
+                    txt = result.getString(i + 1);
                     for (String f : mediaFiles(txt)) {
                         if (refs.containsKey(f)) {
                             refs.put(f, refs.get(f) + 1);

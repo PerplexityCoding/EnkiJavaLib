@@ -457,11 +457,11 @@ public class AnkiDb {
 							// } else if (typeName.equals("Float")) {
 							// oldvalues.put(columns[i], cursor.getFloat(i));
 							// } else {
-							oldvalues.put(columns[i], result.getString(i));
+							oldvalues.put(columns[i], result.getString(i + 1));
 							// }
 						}
 						deck.addUndoCommand(SqlCommandType.SQL_UPD, table, oldvalues,
-								"rowid = " + result.getString(len));
+								"rowid = " + result.getString(len + 1));
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -547,7 +547,7 @@ public class AnkiDb {
 						// } else if (typeName.equals("Float")) {
 						// oldvalues.put(columns[i], cursor.getFloat(i));
 						// } else {
-						oldvalues.put(columns[i], result.getString(i));
+						oldvalues.put(columns[i], result.getString(i + 1));
 						// }
 					}
 					deck.addUndoCommand(SqlCommandType.SQL_INS, table, oldvalues, null);
