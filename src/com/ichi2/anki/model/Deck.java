@@ -4930,4 +4930,100 @@ public class Deck {
         return values;
     }
 
+	public String getHighPriority() {
+		return mHighPriority;
+	}
+
+	public void setHighPriority(String mHighPriority) {
+		this.mHighPriority = mHighPriority;
+	}
+
+	public String getMedPriority() {
+		return mMedPriority;
+	}
+
+	public void setMedPriority(String mMedPriority) {
+		this.mMedPriority = mMedPriority;
+	}
+
+	public String getLowPriority() {
+		return mLowPriority;
+	}
+
+	public void setLowPriority(String mLowPriority) {
+		this.mLowPriority = mLowPriority;
+	}
+
+	public double getHardIntervalMin() {
+		return mHardIntervalMin;
+	}
+
+	public void setHardIntervalMin(double mHardIntervalMin) {
+		this.mHardIntervalMin = mHardIntervalMin;
+	}
+
+	public double getHardIntervalMax() {
+		return mHardIntervalMax;
+	}
+
+	public void setHardIntervalMax(double mHardIntervalMax) {
+		this.mHardIntervalMax = mHardIntervalMax;
+	}
+
+	public double getMidIntervalMin() {
+		return mMidIntervalMin;
+	}
+
+	public void setMidIntervalMin(double mMidIntervalMin) {
+		this.mMidIntervalMin = mMidIntervalMin;
+	}
+
+	public double getMidIntervalMax() {
+		return mMidIntervalMax;
+	}
+
+	public void setMidIntervalMax(double mMidIntervalMax) {
+		this.mMidIntervalMax = mMidIntervalMax;
+	}
+
+	public double getEasyIntervalMin() {
+		return mEasyIntervalMin;
+	}
+
+	public void setEasyIntervalMin(double mEasyIntervalMin) {
+		this.mEasyIntervalMin = mEasyIntervalMin;
+	}
+
+	public double getEasyIntervalMax() {
+		return mEasyIntervalMax;
+	}
+
+	public void setEasyIntervalMax(double mEasyIntervalMax) {
+		this.mEasyIntervalMax = mEasyIntervalMax;
+	}
+
+	public long getDelay0() {
+		return mDelay0;
+	}
+
+	public void setDelay0(long mDelay0) {
+		this.mDelay0 = mDelay0;
+	}
+
+	public long getDelay1() {
+		return mDelay1;
+	}
+
+	public void setDelay1(long mDelay1) {
+		this.mDelay1 = mDelay1;
+	}
+
+	public double getDelay2() {
+		return mDelay2;
+	}
+
+	public void setDelay2(double mDelay2) {
+		this.mDelay2 = mDelay2;
+	}
+
 }

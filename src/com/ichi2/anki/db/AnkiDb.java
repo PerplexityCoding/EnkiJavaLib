@@ -481,8 +481,7 @@ public class AnkiDb {
 			StringBuilder sb = new StringBuilder();
 			sb.append("UPDATE ").append(table).append(" SET ");
 			for (Entry<String, Object> entry : values.entrySet()) {
-				sb.append(entry.getKey()).append(" = ")
-						.append(entry.getValue()).append(", ");
+				sb.append(entry.getKey()).append(" = ").append(entry.getValue()).append(", ");
 			}
 			sb.deleteCharAt(sb.length() - 2);
 			sb.append("WHERE ").append(whereClause);
@@ -669,7 +668,18 @@ public class AnkiDb {
 		StringBuilder sb = new StringBuilder();
 		sb.append("UPDATE ").append(table).append(" SET ");
 		for (Entry<String, Object> entry : values.entrySet()) {
-			sb.append(entry.getKey()).append(" = ").append(entry.getValue()).append(", ");
+			String key = entry.getKey();
+			Object object = entry.getValue();
+			
+			if (object instanceof String) {
+				String s = (String) object;
+				if (s == null || s.length() == 0) {
+					continue;
+				}
+				sb.append(key).append(" = \"").append(s).append("\", ");
+			} else if (object instanceof Long || object instanceof Float || object instanceof Double) {
+				sb.append(key).append(" = ").append(object).append(", ");
+			}
 		}
 		sb.deleteCharAt(sb.length() - 2);
 		sb.append("WHERE ").append(whereClause);
